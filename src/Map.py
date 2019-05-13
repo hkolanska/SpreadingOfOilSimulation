@@ -6,7 +6,6 @@ from src import MapTile
 
 class Map:
     def __init__(self):
-        print("cos")
         self.listOfMapTiles = []
         img = cv2.imread('..\PNGs\gulfMapGimpBW.png')
         xSize = 1100
@@ -20,6 +19,9 @@ class Map:
                 mapTile=self.createTile(i, j, a, img)
                 lineMapTiles.append(mapTile)
             self.listOfMapTiles.append(lineMapTiles)
+        self.createNeighbourhood
+
+
 
     def getXSizeMap(self):
         return self.xSizeMap
@@ -60,3 +62,29 @@ class Map:
         else:
             type=0
         return MapTile.MapTile(x,y,type)
+
+    def createNeighbourhood(self):
+        for i in range(self.xSizeMap):
+            for j in range(self.ySizeMap):
+                self.setNeighbours(map[i][j])
+
+        def setNeighbours(self, tile):
+            x = tile.getX()
+            y = tile.getY()
+            neighbours = []
+            if y % 2 == 0:
+                if x > 0:
+                    neighbours.append(self.getTile(x - 1, y))
+                    if y > 0: neighbours.append(self.getTile(x - 1, y - 1))
+                    if y < self.ySize_ - 1: neighbours.append(self.getTile(x - 1, y + 1))
+                if x < self.xSize_ - 1: neighbours.append(self.getTile(x + 1, y))
+                if y > 0: neighbours.append(self.getTile(x, y - 1))
+                if y < self.ySize_ - 1: neighbours.append(self.getTile(x, y + 1))
+            else:
+                if x > 0: neighbours.append(self.getTile(x - 1, y))
+                if y > 0: neighbours.append(self.getTile(x, y - 1))
+                if y < self.ySize_ - 1: neighbours.append(self.getTile(x, y + 1))
+                if x < self.xSize_ - 1:
+                    neighbours.append(self.getTile(x + 1, y))
+                    if y > 0: neighbours.append(self.getTile(x + 1, y - 1))
+                    if y < self.ySize_ - 1: neighbours.append(self.getTile(x + 1, y + 1))

@@ -1,9 +1,21 @@
+import math
 class MapTile:
     def __init__(self,i,j,type):
-        print(i)
         self.i_=i
         self.j_=j
         self.type_=type
+        self.oilDensity_=0
+        self.oilThickness_=0
+        self.neighbours = []
+        self.firstDirection=0
+        self.secondDiretion=0
+        self.thirdDiretion=0
+        self.fourthDirection=0
+        self.fifthDirection=0
+        self.sixthDiretion=0
+        self.mass_ = self.oilDensity_ * self.oilThickness_
+
+
 
     def getCoords(self):
         return self.i_,self.j_
@@ -13,6 +25,57 @@ class MapTile:
         return self.i_
     def getY(self):
         return self.j_
+    def getMass(self):
+        return self.mass_
+    def getNeighbours(self):
+        return self.neighbours
+    def getOilThickness_(self):
+        return self.oilThickness_
+    def setNeighbours(self,neighbours):
+        self.neighbours=neighbours
+
+    def setOilDensity(self,newOilDensity):
+        self.oilDensity_=newOilDensity
+        self.mass_ = self.oilDensity_ * self.oilThickness_
+
+    def setOilThickness(self,newOilThickness):
+        self.oilThickness_=newOilThickness
+        self.mass_ = self.oilDensity_ * self.oilThickness_
+
+
+    def addNeighbour(self):
+        self.neigbours.add
+
+    def addOil(self,oilMass,oilDensity):
+        self.mass_=oilMass+self.mass_
+        self.oilDensity_=oilDensity
+        self.oilThickness_=self.mass_/self.oilDensity_
+
+
+
 
     def toString(self):
-        return "i: "+ str(self.i_ )+"j: "+str(self.j_)+"type: "+str(self.type_)
+        return "i: "+ str(self.i_ )+"j: "+str(self.j_)+"type: "+str(self.type_)+"maas: "+ str(self.mass_)+"density: "+ str(self.oilDensity_)+"thickness: "+ str(self.oilThickness_)
+
+
+    def doMove(self):
+        m = self.getMass()
+        print(self.getNeighbours())
+        neighbours = self.getNeighbours()
+        oilChanges = []
+        for i in self.neighbours:
+            deltaM = self.deltaMInNaturalSpreading(self, i)
+            oilChanges.append(deltaM)
+        if m < sum(oilChanges):
+            deltaM = m / len(neighbours)+1
+            for i in neighbours:
+                i.addOil(deltaM,self.oilDensity_)
+                print(deltaM)
+        else:
+            for i in range(len(neighbours) - 1):
+                neighbours[i].addOil(oilChanges[i],self.oilDensity_)
+        return neighbours
+
+    def deltaMInNaturalSpreading(self,tile1, tile2):
+        D=2
+        return (tile1.getMass()-tile2.getMass())/2*1-(math.exp(-2*D/2))
