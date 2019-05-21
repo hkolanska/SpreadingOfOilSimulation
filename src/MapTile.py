@@ -47,34 +47,43 @@ class MapTile:
         self.oilDensity_=oilDensity
         self.oilThickness_=self.mass_/self.oilDensity_
 
+    def distance(self,tile):
+        return math.sqrt(pow((self.getY()-tile.getY()),2)+pow((self.getX()-tile.getX()),2))
 
 
 
     def toString(self):
         return "i: "+ str(self.i_ )+"j: "+str(self.j_)+"type: "+str(self.type_)+"maas: "+ str(self.mass_)+"density: "+ str(self.oilDensity_)+"thickness: "+ str(self.oilThickness_)
 
-    def setSpreadingRate(self,startTileX,startTileY,theBiggestDistance):
-        return
+    def setSpreadingRate(self,initialTile,actualTile,theBiggestDistance):
+        distance = actualTile.distance(initialTile)
+        if distance==0:
+            return theBiggestDistance
+        elif (distance<theBiggestDistance):
+            return theBiggestDistance/distance
+        else:
+            return 1
 
 
 
-    def doMove(self):
+    def doMove(self,theBiggestDistance,initialTile):
         m = self.getMass()
         neighbours = self.getNeighbours()
         oilChanges = []
         for i in self.neighbours:
-            deltaM = self.deltaMInNaturalSpreading(self, i[0])
+            i[1]=self.setSpreadingRate(initialTile,i[0],theBiggestDistance)
+            deltaM = self.deltaMInNaturalSpreading(self, i[0],i[1])
             oilChanges.append(deltaM)
         if m < sum(oilChanges):
             deltaM = m / len(neighbours)+1
             for i in neighbours:
                 i[0].addOil(deltaM,self.oilDensity_)
-                print(deltaM)
         else:
             for i in range(len(neighbours) - 1):
                 neighbours[i][0].addOil(oilChanges[i],self.oilDensity_)
         return neighbours
 
-    def deltaMInNaturalSpreading(self,tile1, tile2):
-        D=2
+    def deltaMInNaturalSpreading(self,tile1, tile2,spreadingRate):
+        print(spreadingRate)
+        D=1/27*spreadingRate
         return (tile1.getMass()-tile2.getMass())/2*1-(math.exp(-2*D/2))

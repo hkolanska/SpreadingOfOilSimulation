@@ -21,10 +21,12 @@ class View(Tk):
         self.canvas.pack()
         self.a_ = 4
         self.tilesMap_ = tilesMap
-        self.Sleep = 1
+        self.Sleep = 100
+        self.initialTile = self.tilesMap_.getTile(125,75)
         self.Pause=False
         self.drawMap()
-        self.setInitialTile(self.tilesMap_.getTile(125,75))
+        self.setInitialTile(self.initialTile)
+        self.theBiggestDistance=0
 
     def setInitialTile(self,mapTile):
         mapTile.setOilDensity(835)
@@ -131,11 +133,14 @@ class View(Tk):
     def doChanges(self):
         oilChanges = []
         for c in self.oilHex_:
-            changedTiles = c.mapTile.doMove()
+            changedTiles = c.mapTile.doMove(self.theBiggestDistance,self.initialTile)
             if changedTiles is not None:
                 for t in changedTiles:
                      oilChanges.append(t[0])
                      self.changeTileColor(t[0])
+                     distance = t[0].distance(self.initialTile)
+                     if(distance>self.theBiggestDistance):
+                         self.theBiggestDistance=distance
         self.canvas.update()
         if oilChanges is not None:
             self.oilHex_=[]
