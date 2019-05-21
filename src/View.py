@@ -30,7 +30,7 @@ class View(Tk):
 
     def setInitialTile(self,mapTile):
         mapTile.setOilDensity(835)
-        mapTile.setOilThickness(3000)
+        mapTile.setOilThickness(30)
         self.oilHex_.append(self.getHexagon(mapTile))
 
     def drawMap(self):
@@ -136,11 +136,14 @@ class View(Tk):
             changedTiles = c.mapTile.doMove(self.theBiggestDistance,self.initialTile)
             if changedTiles is not None:
                 for t in changedTiles:
-                     oilChanges.append(t[0])
-                     self.changeTileColor(t[0])
-                     distance = t[0].distance(self.initialTile)
-                     if(distance>self.theBiggestDistance):
-                         self.theBiggestDistance=distance
+                    if t[0].oilThickness_>0:
+                         oilChanges.append(t[0])
+                         self.changeTileColor(t[0])
+                         distance = t[0].distance(self.initialTile)
+                         if(distance>self.theBiggestDistance):
+                             self.theBiggestDistance=distance
+                         print(self.theBiggestDistance)
+                         print(distance)
         self.canvas.update()
         if oilChanges is not None:
             self.oilHex_=[]
