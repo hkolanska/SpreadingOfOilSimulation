@@ -5,15 +5,12 @@ import math
 
 
 class Tile:
-    def __init__(self, x, y, a, cords, index):
-        self.x_ = x
-        self.y_ = y
-        self.a_ = a
-        self.cords_ = cords
+    def __init__(self, mapTile, index):
+        self.mapTile =mapTile
         self.index_ = index
 
 class View(Tk):
-    def __init__(self, tilemap):
+    def __init__(self, tilesMap):
         Tk.__init__(self)
         self.oilHex_=[]
         self.hexagons = []
@@ -23,20 +20,19 @@ class View(Tk):
         self.canvas = Canvas(width=1920, height=1080, bg="#AFEEEE")
         self.canvas.pack()
         self.a_ = 4
-        self.tilemap_ = tilemap
-        self.setInitialTile(self.tilemap_.getTile(125,75))
-        self.Sleep = 100
+        self.tilesMap_ = tilesMap
+        self.Sleep = 1
         self.Pause=False
         self.drawMap()
+        self.setInitialTile(self.tilesMap_.getTile(125,75))
 
-    def setInitialTile(self,tile):
-        tile.setOilDensity(835)
-        tile.setOilThickness(3000)
-        self.oilHex_.append(tile)
-        print(tile.toString())
+    def setInitialTile(self,mapTile):
+        mapTile.setOilDensity(835)
+        mapTile.setOilThickness(3000)
+        self.oilHex_.append(self.getHexagon(mapTile))
 
     def drawMap(self):
-        map = self.tilemap_
+        map = self.tilesMap_
         xSize = map.getXSizeMap()
         ySize = map.getYSizeMap()
         if ySize % 2 == 0:
@@ -46,15 +42,15 @@ class View(Tk):
         xHeight = (2 * xSize + 1) * math.sqrt(3) / 2
         for i in range(xSize):
             for j in range(ySize):
-                self.drawTile(map.getTile(i, j), self.a_)
+                self.drawTile(map.getTile(i, j))
         self.doChanges()
 
 
     def fromRGB(self, R, G, B):
         return "#%02x%02x%02x" % (R, G, B)
 
-    def drawTile(self, tile, a):
-        if tile is None:
+    def drawTile(self, mapTile):
+        if mapTile is None:
             return
         colors = [
             "#F3D804",
@@ -72,21 +68,21 @@ class View(Tk):
             "#2c2cc2"
             "#1616e6"
         ]
-        tileCoords = tile.getCoords()
+        tileCoords = mapTile.getCoords()
         if tileCoords[1] % 2 == 0:
-            startX = 1.5 * a + a * math.sqrt(3) * tileCoords[0]
+            startX = 1.5 * self.a_ + self.a_ * math.sqrt(3) * tileCoords[0]
         else:
-            startX = 1.5 * a + a * math.sqrt(3) / 2 + a * math.sqrt(3) * tileCoords[0]
-        startY = 1.5 * a + 1 / 2 * a + 1.5 * tileCoords[1] * a
+            startX = 1.5 * self.a_ + self.a_ * math.sqrt(3) / 2 + self.a_ * math.sqrt(3) * tileCoords[0]
+        startY = 1.5 * self.a_ + 1 / 2 * self.a_ + 1.5 * tileCoords[1] * self.a_
         angle = 60
         coords = []
         for i in range(1, 7):
             coords.append([startX, startY])
-            endX = startX + a * math.sin(math.radians(angle * i))
-            endY = startY + a * math.cos(math.radians(angle * i))
+            endX = startX + self.a_ * math.sin(math.radians(angle * i))
+            endY = startY + self.a_ * math.cos(math.radians(angle * i))
             startX = endX
             startY = endY
-        if tile.getOilThickness_() == 0:
+        if mapTile.getOilThickness_() == 0:
             color = colors[1]
         else:
             color = oilColors[0]
@@ -112,8 +108,19 @@ class View(Tk):
             if i[1] > self.biggestTileY:
                 self.biggestTileY = i[1]
 
-        hex = Tile(tile.getX(), tile.getY(), a, coords, index)
+        hex = Tile(mapTile, index)
         self.hexagons.append(hex)
+
+
+    def getHexagon(self,mapTile):
+        for hex in self.hexagons:
+            if (hex.mapTile==mapTile):
+                return hex
+
+    def changeTileColor(self,mapTile):
+        self.canvas.itemconfig(self.getHexagon(mapTile).index_, fill='red')
+
+
 
     def isInOilHex(self,tile):
         for t in self.oilHex_:
@@ -124,17 +131,17 @@ class View(Tk):
     def doChanges(self):
         oilChanges = []
         for c in self.oilHex_:
-            changedTiles = c.doMove()
+            changedTiles = c.mapTile.doMove()
             if changedTiles is not None:
                 for t in changedTiles:
-                    oilChanges.append(t)
-                    self.drawTile(t, self.a_)
+                     oilChanges.append(t[0])
+                     self.changeTileColor(t[0])
         self.canvas.update()
         if oilChanges is not None:
             self.oilHex_=[]
             for t in oilChanges:
-                if not self.isInOilHex(t):
-                    self.oilHex_.append(t)
+                if not self.isInOilHex(self.getHexagon(t)):
+                    self.oilHex_.append(self.getHexagon(t))
         if self.Pause is False:
             self.canvas.after(self.Sleep, self.doChanges)
 
