@@ -23,7 +23,7 @@ class View(Tk):
         self.canvas.bind("<Motion>", self.getTileByXY)
         self.a_ = 7
         self.tilesMap_ = tilesMap
-        self.Sleep = 100
+        self.Sleep = 1000
         self.initialTile = self.tilesMap_.getTile(65, 40)
         self.Pause = False
         self.theBiggestDistance = 0
@@ -32,7 +32,7 @@ class View(Tk):
 
     def setInitialTile(self, mapTile):
         mapTile.setOilDensity(835)
-        mapTile.setOilThickness(30)
+        mapTile.setOilThickness(60)
         self.oilHex_.append(self.getHexagon(mapTile))
 
     def drawMap(self):
@@ -164,7 +164,6 @@ class View(Tk):
         self.infoId = self.canvas.create_text((1700, 20), anchor="nw", font=("helvetica", 12), text=onscreen)
 
     def getTileByXY(self, event):
-         print(event.x,event.y)
  #       if (event.x<self.biggestTileX and event.y<self.biggestTileY):
          nearest = int(self.canvas.find_closest(event.x,event.y)[0])
          tile = self.getHexagonByIndex(nearest)
