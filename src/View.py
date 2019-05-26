@@ -1,3 +1,5 @@
+import time
+
 from src import SpreadingLogic
 from src import AllIsWaterMap
 from tkinter import *
@@ -21,14 +23,26 @@ class View(Tk):
         self.canvas = Canvas(width=1920, height=1080, bg="#AFEEEE")
         self.canvas.pack()
         self.canvas.bind("<Motion>", self.getTileByXY)
-        self.a_ = 7
+        self.a_ = 6.5
         self.tilesMap_ = tilesMap
-        self.Sleep = 1000
+        self.Sleep = 100
         self.initialTile = self.tilesMap_.getTile(65, 40)
         self.Pause = False
         self.theBiggestDistance = 0
         self.iterationNumber = 1
         self.drawMap()
+
+        buttonBG4 = self.canvas.create_rectangle(1700, 830, 1800, 880, fill="grey40", outline="grey60")
+        buttonTXT4 = self.canvas.create_text(1750, 845, text="Pause")
+        self.canvas.tag_bind(buttonBG4, "<Button-1>", self.pause)
+        self.canvas.tag_bind(buttonTXT4, "<Button-1>", self.pause)
+
+    def pause(self,event):
+        if self.Pause is not True:
+            self.Pause=True
+        else:
+            self.Pause=False
+            self.doChanges()
 
     def setInitialTile(self, mapTile):
         mapTile.setOilDensity(835)
@@ -136,6 +150,7 @@ class View(Tk):
 
     def doChanges(self):
         oilChanges = []
+        startTime=time.time()
         self.iterationNumber+=1
         for c in self.oilHex_:
             changedTiles = c.mapTile.doMove(self.iterationNumber/2, self.initialTile)
@@ -153,14 +168,14 @@ class View(Tk):
             for t in oilChanges:
                 if not self.isInOilHex(self.getHexagon(t)):
                     self.oilHex_.append(self.getHexagon(t))
-
+        print(self.iterationNumber)
+        print(time.time()-startTime)
         if self.Pause is False:
             self.canvas.after(self.Sleep, self.doChanges)
 
     def showTileDetails(self, tile):
         self.canvas.delete(self.infoId)
         onscreen = "Distance from \ninitial tile (65,40):\n(" + str(tile.mapTile.getX()) + "," + str(tile.mapTile.getY()) + ")"+ str(tile.mapTile.distance(self.initialTile))
-        print(onscreen)
         self.infoId = self.canvas.create_text((1700, 20), anchor="nw", font=("helvetica", 12), text=onscreen)
 
     def getTileByXY(self, event):

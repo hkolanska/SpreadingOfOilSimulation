@@ -6,8 +6,8 @@ from src import MapTile
 class AllIsWaterMap:
     def __init__(self):
         self.listOfMapTiles = []
-        self.xSize = 470
-        self.ySize = 250
+        self.xSize = 260
+        self.ySize = 140
         a = 1
         self.xSizeMap = int((self.xSize - a * math.sqrt(3) / 2) / (a * math.sqrt(3)))
         self.ySizeMap = int(self.ySize / (3 * a)*2)

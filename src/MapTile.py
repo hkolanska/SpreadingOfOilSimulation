@@ -54,7 +54,20 @@ class MapTile:
         self.oilThickness_ = self.mass_ / self.oilDensity_
 
     def distance(self, tile):
-        distance = (abs(self.getY() - tile.getY())+abs(self.getX() - tile.getX()))/2
+
+        if tile.getX() % 2 == 0:
+            initialX = 1 + math.sqrt(3) * tile.getX()
+        else:
+            initialX = 1 + math.sqrt(3) / 2 + math.sqrt(3) * tile.getX()
+        initialY = 0.5 + 1 / 2 + 1.5 * tile.getY()
+
+        if self.getX() % 2 == 0:
+            startX = 1  + math.sqrt(3) * self.getX()
+        else:
+            startX = 1 +  math.sqrt(3) / 2 +  math.sqrt(3) * self.getX()
+        startY = 0.5  + 1 / 2  + 1.5 * self.getY()
+
+        distance = (abs(initialY - startY)+abs(initialX - startX ))/2
         return distance
 
     def toString(self):
@@ -62,12 +75,13 @@ class MapTile:
             self.mass_) + "density: " + str(self.oilDensity_) + "thickness: " + str(self.oilThickness_)
 
     def setSpreadingRate(self, initialTile, actualTile, theBiggestDistance):
-        distance = actualTile.distance(initialTile)
-        if distance == 0:
-            return theBiggestDistance
-        elif (distance < theBiggestDistance):
-            return theBiggestDistance / distance * 30
-        else:
+        # distance = actualTile.distance(initialTile)
+        # if distance == 0:
+        #     return theBiggestDistance
+        # elif (distance < theBiggestDistance):
+        #     return theBiggestDistance / distance * 300
+        # else:
+
             return 1
 
     def doMove(self, theBiggestDistance, initialTile):
@@ -77,10 +91,10 @@ class MapTile:
         for i in self.neighbours:
             i[1] = i[1] - 1 + self.setSpreadingRate(initialTile, i[0], theBiggestDistance)
             deltaM = self.deltaMInNaturalSpreading(self, i[0], i[1])
-            if deltaM < self.oilDensity_ * theBiggestDistance*1.4:
-                oilChanges.append(0)
-            else:
-                oilChanges.append(deltaM)
+            #if deltaM < self.oilDensity_ * theBiggestDistance*1.4:
+                #oilChanges.append(0)
+#            else:
+            oilChanges.append(deltaM)
         if m < sum(oilChanges):
             deltaM = m / len(neighbours) + 1
             for i in neighbours:
