@@ -21,10 +21,10 @@ class View(Tk):
         self.canvas = Canvas(width=1920, height=1080, bg="#AFEEEE")
         self.canvas.pack()
         self.canvas.bind("<Motion>", self.getTileByXY)
-        self.a_ = 7
+        self.a_ = 6
         self.tilesMap_ = tilesMap
-        self.Sleep = 1000
-        self.initialTile = self.tilesMap_.getTile(65, 40)
+        self.Sleep = 10000
+        self.initialTile = self.tilesMap_.getTile(65, 41)
         self.Pause = False
         self.theBiggestDistance = 0
         self.iterationNumber = 1
@@ -32,7 +32,7 @@ class View(Tk):
 
     def setInitialTile(self, mapTile):
         mapTile.setOilDensity(835)
-        mapTile.setOilThickness(60)
+        mapTile.setOilThickness(600)
         self.oilHex_.append(self.getHexagon(mapTile))
 
     def drawMap(self):
@@ -112,6 +112,8 @@ class View(Tk):
             if i[1] > self.biggestTileY:
                 self.biggestTileY = i[1]
 
+
+
         hex = Tile(mapTile, index)
         self.hexagons.append(hex)
 
@@ -144,9 +146,6 @@ class View(Tk):
                     if t[0].oilThickness_ > 0:
                         oilChanges.append(t[0])
                         self.changeTileColor(t[0])
-                        distance = t[0].distance(self.initialTile)
-#                      if (distance > self.theBiggestDistance):
-#                           self.theBiggestDistance = distance
         self.canvas.update()
         if oilChanges is not None:
             self.oilHex_ = []
@@ -159,8 +158,7 @@ class View(Tk):
 
     def showTileDetails(self, tile):
         self.canvas.delete(self.infoId)
-        onscreen = "Distance from \ninitial tile (65,40):\n(" + str(tile.mapTile.getX()) + "," + str(tile.mapTile.getY()) + ")"+ str(tile.mapTile.distance(self.initialTile))
-        print(onscreen)
+        onscreen = "Distance from \ninitial tile (65,40):\n(" + str(tile.mapTile.getX()) + "," + str(tile.mapTile.getY()) + ")\n"+ str(tile.mapTile.distance(self.initialTile))+" " + str(len(tile.mapTile.neighbours))
         self.infoId = self.canvas.create_text((1700, 20), anchor="nw", font=("helvetica", 12), text=onscreen)
 
     def getTileByXY(self, event):

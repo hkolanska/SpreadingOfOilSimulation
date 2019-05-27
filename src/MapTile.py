@@ -62,12 +62,12 @@ class MapTile:
             self.mass_) + "density: " + str(self.oilDensity_) + "thickness: " + str(self.oilThickness_)
 
     def setSpreadingRate(self, initialTile, actualTile, theBiggestDistance):
-        distance = actualTile.distance(initialTile)
-        if distance == 0:
-            return theBiggestDistance
-        elif (distance < theBiggestDistance):
-            return theBiggestDistance / distance * 30
-        else:
+        # distance = actualTile.distance(initialTile)
+        # if distance == 0:
+        #     return theBiggestDistance
+        # elif (distance < theBiggestDistance):
+        #     return theBiggestDistance / distance * 30
+        # else:
             return 1
 
     def doMove(self, theBiggestDistance, initialTile):
