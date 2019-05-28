@@ -62,12 +62,12 @@ class MapTile:
             self.mass_) + "density: " + str(self.oilDensity_) + "thickness: " + str(self.oilThickness_)
 
     def setSpreadingRate(self, initialTile, actualTile, theBiggestDistance):
-        # distance = actualTile.distance(initialTile)
-        # if distance == 0:
-        #     return theBiggestDistance
-        # elif (distance < theBiggestDistance):
-        #     return theBiggestDistance / distance * 30
-        # else:
+        distance = actualTile.distance(initialTile)
+        if distance == 0:
+            return theBiggestDistance
+        elif (distance < theBiggestDistance):
+            return theBiggestDistance / distance * 30
+        else:
             return 1
 
     def doMove(self, theBiggestDistance, initialTile):
@@ -77,14 +77,15 @@ class MapTile:
         for i in self.neighbours:
             i[1] = i[1] - 1 + self.setSpreadingRate(initialTile, i[0], theBiggestDistance)
             deltaM = self.deltaMInNaturalSpreading(self, i[0], i[1])
-            if deltaM < self.oilDensity_ * theBiggestDistance*1.4:
+            if deltaM < self.oilDensity_ * theBiggestDistance*2 or  i[0].type_==1:
                 oilChanges.append(0)
             else:
                 oilChanges.append(deltaM)
         if m < sum(oilChanges):
             deltaM = m / len(neighbours) + 1
             for i in neighbours:
-                i[0].addOil(deltaM, self.oilDensity_)
+                if (oilChanges!=0):
+                    i[0].addOil(deltaM, self.oilDensity_)
         else:
             for i in range(len(neighbours) - 1):
                 if oilChanges[i] != 0:

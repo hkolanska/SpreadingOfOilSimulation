@@ -2,6 +2,8 @@ import math
 from src import MapTile
 
 
+
+
 class AllIsWaterMap:
     def __init__(self):
         self.listOfMapTiles = []
