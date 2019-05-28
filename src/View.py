@@ -1,6 +1,5 @@
 from src import SpreadingLogic
 from src import AllIsWaterMap
-from src import Map
 
 from tkinter import *
 import math
@@ -21,27 +20,30 @@ class View(Tk):
         self.biggestTileY = 1000
         self.infoId = 0
         self.oilColors = [
-            "#000000"
-            "#1b1b20"
-            "#2b2b3a"
-            "#34344e"
-            "#3b3b69"
-            "#3a3a7e"
-            "#3131ab"
-            "#2c2cc2"
-            "#1616e6"
+            "black",
+            "gray13",
+            "gray26",
+            "gray39",
+            "gray50",
+            "gray60",
+            "gray66",
         ]
         self.canvas = Canvas(width=1920, height=1080, bg="#AFEEEE")
         self.canvas.pack()
         self.canvas.bind("<Motion>", self.getTileByXY)
         self.a_ = 6
         self.tilesMap_ = tilesMap
-        self.Sleep = 100
+        self.Sleep = 1000
         self.initialTile = self.tilesMap_.getTile(35, 21)
         self.Pause = False
         self.theBiggestDistance = 0
         self.iterationNumber = 1
         self.drawMap()
+
+        buttonBG4 = self.canvas.create_rectangle(1670, 680, 1730, 720, fill="grey40", outline="grey60")
+        buttonTXT4 = self.canvas.create_text(1700, 700, text="Pause")
+        self.canvas.tag_bind(buttonBG4, "<Button-1>", self.pause)
+        self.canvas.tag_bind(buttonTXT4, "<Button-1>", self.pause)
 
     def setInitialTile(self, mapTile):
         mapTile.setOilDensity(835)
@@ -70,8 +72,8 @@ class View(Tk):
         if mapTile is None:
             return
         colors = [
-            "#F3D804",
-            "#0000FF"
+            "yellow",
+            "blue"
 
         ]
 
@@ -123,6 +125,12 @@ class View(Tk):
         hex = Tile(mapTile, index)
         self.hexagons.append(hex)
 
+    def pause(self,event):
+        if self.Pause is not True:
+            self.Pause=True
+        else:
+            self.Pause=False
+            self.doChanges()
     def getHexagon(self, mapTile):
         for hex in self.hexagons:
             if (hex.mapTile == mapTile):
@@ -135,7 +143,7 @@ class View(Tk):
         return None
     def changeTileColor(self, mapTile):
         if mapTile.getOilThickness_!=0:
-            self.canvas.itemconfig(self.getHexagon(mapTile).index_, fill=self.oilColors[0])
+            self.canvas.itemconfig(self.getHexagon(mapTile).index_, fill=self.oilColors[3])
 
     def isInOilHex(self, tile):
         for t in self.oilHex_:
@@ -144,6 +152,9 @@ class View(Tk):
         return False
 
     def doChanges(self):
+        self.Sleep = 1000-self.iterationNumber
+        if self.Sleep<2:
+            self.Sleep=1
         oilChanges = []
         self.iterationNumber+=1
         for c in self.oilHex_:
@@ -176,7 +187,7 @@ class View(Tk):
          if tile:
              self.showTileDetails(tile)
 
-#map = AllIsWaterMap.AllIsWaterMap()
-map =Map.Map()
+map = AllIsWaterMap.AllIsWaterMap()
+#map =Map.Map()
 view = View(map)
 view.mainloop()
