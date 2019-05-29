@@ -34,8 +34,8 @@ class View(Tk):
         self.canvas.bind("<Motion>", self.getTileByXY)
         self.a_ = 6
         self.tilesMap_ = tilesMap
-        self.Sleep = 1000
-        self.initialTile = self.tilesMap_.getTile(35, 21)
+        self.Sleep = 100
+        self.initialTile = self.tilesMap_.getTile(24, 52)
         self.Pause = False
         self.theBiggestDistance = 0
         self.iterationNumber = 1
@@ -94,7 +94,6 @@ class View(Tk):
             startX = endX
             startY = endY
         if mapTile.getOilThickness_() == 0:
- #           print(mapTile.type_)
             if mapTile.type_==0:
                 color = colors[1]
             elif mapTile.type_==2:
@@ -185,13 +184,11 @@ class View(Tk):
         self.infoId = self.canvas.create_text((1700, 20), anchor="nw", font=("helvetica", 12), text=onscreen)
 
     def getTileByXY(self, event):
- #       if (event.x<self.biggestTileX and event.y<self.biggestTileY):
          nearest = int(self.canvas.find_closest(event.x,event.y)[0])
          tile = self.getHexagonByIndex(nearest)
          if tile:
              self.showTileDetails(tile)
 
-#map = AllIsWaterMap.AllIsWaterMap()
 map =Map.Map()
 view = View(map)
 view.mainloop()
