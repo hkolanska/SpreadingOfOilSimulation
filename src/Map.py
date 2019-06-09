@@ -7,10 +7,10 @@ from src import MapTile
 class Map:
     def __init__(self):
         self.listOfMapTiles = []
-        img = cv2.imread('..\PNGs\gulfMapGimpBWCurrent.png')
-        self.xSize = 902
-        self.ySize = 693
-        self.a= 4
+        img = cv2.imread('..\PNGs\mapFragment.png')
+        self.xSize = 539
+        self.ySize = 337
+        self.a= 1.5
         self.xSizeMap = int((self.xSize - self.a* math.sqrt(3) / 2) / (self.a* math.sqrt(3)))
         self.ySizeMap = int(self.ySize / (3 * self.a)*2)
         for i in range(self.xSizeMap):
@@ -20,8 +20,8 @@ class Map:
                 lineMapTiles.append(mapTile)
             self.listOfMapTiles.append(lineMapTiles)
         self.createNeighbourhood()
-        self.addCurrents(img)
-        self.createWind()
+#        self.addCurrents(img)
+#        self.createWind()
 
     def getXSizeMap(self):
         return self.xSizeMap
@@ -79,9 +79,7 @@ class Map:
     def createWind(self):
         for i in range(2,self.xSizeMap-2):
             for j in range(2,self.ySizeMap-2):
-                self.listOfMapTiles[i][j].neighbours[1][1]=2000
-
-
+                self.listOfMapTiles[i][j].neighbours[1][1]=200
     def setNeighbours(self, tile):
         x = tile.getX()
         y = tile.getY()
@@ -119,13 +117,11 @@ class Map:
         tile.setNeighbours(neighbours)
 
     def addCurrents(self,img):
-
         for i in range(2,self.xSizeMap-2):
             for j in range(2,self.ySizeMap-2):
                 self.setCurrentValue(self.listOfMapTiles[i][j],img)
 
     def setCurrentValue(self,tile,img):
-
         if tile.type_==1:
             return
         x, y = tile.getCoords()
@@ -152,15 +148,15 @@ class Map:
             if(r==0 and b==0 and g==0) or (r==255 and b==255 and g==255):
                 continue
             if (b==0 and g==0 and r==254):
-                tile.neighbours[0][1]=3000
+                tile.setSpreadingRateCurrents(0,300)
             if (b==254 and g==0 and r==254):
-                tile.neighbours[1][1]=3000
+                tile.setSpreadingRateCurrents(1,300)
             if (b == 254 and g == 254 and r == 0):
-                tile.neighbours[2][1] = 3000
+                tile.setSpreadingRateCurrents(2,300)
             if (b==98 and g==19 and r==98):
-                tile.neighbours[3][1]=3000
+                tile.setSpreadingRateCurrents(3,300)
             if (b==254 and g==0 and r==0):
-                tile.neighbours[4][1]=3000
+                tile.setSpreadingRateCurrents(4,300)
             if (b==0 and g==0 and r==254):
-                tile.neighbours[5][1]=3000
+                tile.setSpreadingRateCurrents(5,300)
 

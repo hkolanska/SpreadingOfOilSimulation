@@ -32,10 +32,10 @@ class View(Tk):
         self.canvas = Canvas(width=1920, height=1080, bg="#AFEEEE")
         self.canvas.pack()
         self.canvas.bind("<Motion>", self.getTileByXY)
-        self.a_ = 6
+        self.a_ = 4.5
         self.tilesMap_ = tilesMap
         self.Sleep = 100
-        self.initialTile = self.tilesMap_.getTile(24, 52)
+        self.initialTile = self.tilesMap_.getTile(125, 90)
         self.Pause = False
         self.theBiggestDistance = 0
         self.iterationNumber = 1
@@ -46,9 +46,10 @@ class View(Tk):
         self.canvas.tag_bind(buttonBG4, "<Button-1>", self.pause)
         self.canvas.tag_bind(buttonTXT4, "<Button-1>", self.pause)
 
+
     def setInitialTile(self, mapTile):
         mapTile.setOilDensity(835)
-        mapTile.setOilThickness(60)
+        mapTile.setOilThickness(500)
         self.oilHex_.append(self.getHexagon(mapTile))
 
     def drawMap(self):
@@ -64,6 +65,7 @@ class View(Tk):
             for j in range(ySize):
                 self.drawTile(map.getTile(i, j))
         self.setInitialTile(self.initialTile)
+        self.drawTile(map.getTile(self.initialTile.getX(), self.initialTile.getY()))
         self.doChanges()
 
     def fromRGB(self, R, G, B):
@@ -170,17 +172,17 @@ class View(Tk):
                         self.changeTileColor(t[0])
         self.canvas.update()
         if oilChanges is not None:
-            self.oilHex_ = []
             for t in oilChanges:
                 if not self.isInOilHex(self.getHexagon(t)):
                     self.oilHex_.append(self.getHexagon(t))
-
+        if self.iterationNumber ==3:
+            self.Pause=True
         if self.Pause is False:
             self.canvas.after(self.Sleep, self.doChanges)
 
     def showTileDetails(self, tile):
         self.canvas.delete(self.infoId)
-        onscreen = "Distance from \ninitial tile (65,40):\n(" + str(tile.mapTile.getX()) + "," + str(tile.mapTile.getY()) + ")\n"+ str(tile.mapTile.distance(self.initialTile))+" " + str(len(tile.mapTile.neighbours))
+        onscreen = "Distance from \ninitial tile (65,40):\n(" + str(tile.mapTile.getX()) + "," + str(tile.mapTile.getY()) + ")\n"+ str(tile.mapTile.distance(self.initialTile))+" " + str(len(tile.mapTile.neighbours))+" \n"+str(tile.mapTile.getOilThickness_())
         self.infoId = self.canvas.create_text((1700, 20), anchor="nw", font=("helvetica", 12), text=onscreen)
 
     def getTileByXY(self, event):
