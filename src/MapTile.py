@@ -73,7 +73,7 @@ class MapTile:
         # if (distance < theBiggestDistance and distance>0):
         #     return theBiggestDistance - distance * 30
         # else:
-        return 1
+        return 50
 
     def setSpreadingRateCurrents(self,num,val):
         self.neighbours[num][1]=val
@@ -84,12 +84,12 @@ class MapTile:
         oilChanges = []
         oilToRemove=0
         for i in self.neighbours:
-            i[1] = i[1] - 1 + self.setSpreadingRate(initialTile, i[0], theBiggestDistance)
+            i[1] = i[1] - 50 + self.setSpreadingRate(initialTile, i[0], theBiggestDistance)
             deltaM = self.deltaMInNaturalSpreading( i[0], i[1])
             if deltaM<0:
                 deltaM=0
             if i[0].getMass()<=0:
-                if deltaM +i[0].almostSpreaded< self.oilDensity_ *0.003:
+                if (deltaM +i[0].almostSpreaded)< (self.oilDensity_ *0.00000003):
                     oilToRemove+=deltaM
                     i[0].addAlmostSpreaded(deltaM)
                     neighbours.remove(i)
@@ -110,5 +110,5 @@ class MapTile:
         return neighbours
 
     def deltaMInNaturalSpreading(self, tile2, spreadingRate):
-        D = 1 / 27*spreadingRate
+        D = 1 / 270*spreadingRate
         return (self.getMass() - tile2.getMass()) / 2 * (1 - (math.exp(-2 * D / 2)))

@@ -1,6 +1,5 @@
 import cv2
 import math
-import numpy
 from src import MapTile
 
 
@@ -20,8 +19,8 @@ class Map:
                 lineMapTiles.append(mapTile)
             self.listOfMapTiles.append(lineMapTiles)
         self.createNeighbourhood()
-#        self.addCurrents(img)
-#        self.createWind()
+        self.addCurrents(img)
+        self.createWind()
 
     def getXSizeMap(self):
         return self.xSizeMap
@@ -80,6 +79,7 @@ class Map:
         for i in range(2,self.xSizeMap-2):
             for j in range(2,self.ySizeMap-2):
                 self.listOfMapTiles[i][j].neighbours[1][1]=200
+                self.listOfMapTiles[i][j].neighbours[4][1]=30
     def setNeighbours(self, tile):
         x = tile.getX()
         y = tile.getY()

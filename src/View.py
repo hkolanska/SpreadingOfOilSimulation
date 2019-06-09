@@ -49,7 +49,7 @@ class View(Tk):
 
     def setInitialTile(self, mapTile):
         mapTile.setOilDensity(835)
-        mapTile.setOilThickness(500)
+        mapTile.setOilThickness(5000)
         self.oilHex_.append(self.getHexagon(mapTile))
 
     def drawMap(self):
@@ -170,13 +170,16 @@ class View(Tk):
                     if t[0].oilThickness_ > 0 and t[0].type_==0:
                         oilChanges.append(t[0])
                         self.changeTileColor(t[0])
-        self.canvas.update()
+            self.canvas.update()
         if oilChanges is not None:
             for t in oilChanges:
                 if not self.isInOilHex(self.getHexagon(t)):
                     self.oilHex_.append(self.getHexagon(t))
-        if self.iterationNumber ==3:
-            self.Pause=True
+        sumOfOil=0
+        for c in self.oilHex_:
+            sumOfOil+=c.mapTile.getOilThickness_()+c.mapTile.almostSpreaded
+        print(sumOfOil)
+
         if self.Pause is False:
             self.canvas.after(self.Sleep, self.doChanges)
 
